@@ -1,0 +1,45 @@
+movie-site/
+├── docker/
+│   ├── nginx/
+│   │   └── default.conf
+├── src/            ← Laravel will be installed here
+├── .env            ← Laravel env (copied to src/.env)
+├── docker-compose.yml
+
+
+# From the root folder:
+# docker-compose run --rm app composer create-project laravel/laravel .
+# docker-compose up -d
+docker-compose run --rm composer create-project laravel/laravel .
+cp src/.env.example src/.env
+docker-compose up -d
+docker-compose exec app bash
+cd /var/www(when you do not define working_dir)
+php artisan migrate
+
+# 1. Double-check APP_KEY is present
+cat .env | grep APP_KEY
+
+# 2. Clear Laravel's config cache
+php artisan config:clear
+
+# 3. Re-cache the config
+php artisan config:cache
+
+# 4. Restart PHP (optional but sometimes needed)
+exit
+docker-compose restart
+
+
+
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=movie
+DB_USERNAME=root
+DB_PASSWORD=root
+
+
+docker-compose exec app bash
+chown -R www-data:www-data storage bootstrap/cache
+php artisan key:generate
